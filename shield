@@ -34,12 +34,11 @@ Queue.prototype.takeRequest = function (reqData) {
   //   return;
   // }
   // Otherwise proxy it through:
-  // TODO step 0 - load balancing
   // TODO step 1 - identify mailicious requests
-  // TODO step 2 - gauge how much load backends can take
   this.proxyRequest(reqData);
 };
 Queue.prototype.requestFinished = function () {
+  // TODO step 2 - gauge how much load backends can take
   return;
 };
 Queue.prototype.proxyRequest = function(reqData) {
