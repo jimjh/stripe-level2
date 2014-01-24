@@ -27,16 +27,16 @@ function rejectRequest(reqData) {
 var Queue = function (proxies, parameters) {
   this.proxies    = proxies;
   this.parameters = parameters;
-  this.model      = new ClientModel(60, 10);
+  this.model      = new ClientModel(0);
 };
 Queue.prototype.takeRequest = function (reqData) {
   var ip = ipFromRequest(reqData),
-   score = this.model.score(ip);
-  if (!isNaN(score) && score > 1.5) {
+  score = this.model.score(ip);
+  if (!isNaN(score) && score > 0.1) {
     rejectRequest(reqData);
     return;
   }
-  this.model.push(ip, new Date());
+  this.model.push(ip);
   this.proxyRequest(reqData);
 };
 Queue.prototype.requestFinished = function () {
@@ -44,8 +44,7 @@ Queue.prototype.requestFinished = function () {
   return;
 };
 Queue.prototype.proxyRequest = function(reqData) {
-  var i = 0;
-  if (Math.random() > 0.5) i++;
+  var i = Math.floor(Math.random() * this.proxies.length);
   this.proxies[i].proxyRequest(reqData.request, reqData.response, reqData.buffer);
 }
 

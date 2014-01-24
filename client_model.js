@@ -17,15 +17,8 @@
 //
 // @author Jim Lim - jim@quixey.com
 "use strict";
-var LinkedList = require('linkedlist');
-
-/**
- * @param expirySecs Number lifetime of request in number of seconds
- */
-module.exports = function(expirySecs, confidenceThreshold) {
-  Object.defineProperty(this, '_expiry', { value: expirySecs });
+module.exports = function(confidenceThreshold) {
   Object.defineProperty(this, '_confi',  { value: confidenceThreshold });
-  this._requests = new LinkedList();
   this._clients  = {};
   this._total    = 0;
   this._total2   = 0;
@@ -35,12 +28,10 @@ module.exports = function(expirySecs, confidenceThreshold) {
 /**
  * Records a new request
  * @param ip   String ip address
- * @param date Date   date of request
  */
-module.exports.prototype.push = function(ip, date) {
-  var item = new Request(ip, date);
-  expire(this, date);
-  append(this, item);
+module.exports.prototype.push = function(ip) {
+  // expire(this, date);
+  append(this, ip);
 }
 
 /**
@@ -48,15 +39,10 @@ module.exports.prototype.push = function(ip, date) {
  * @return score
  */
 module.exports.prototype.score = function(client) {
-  if (this._requests.length < this._confi) return 0;
+  if (this._count < this._confi) return 0;
   var mean = this._total / this._count,
      stdev = Math.sqrt(this._total2 / this._count - Math.pow(mean, 2));
   return (this._clients[client] - mean) / stdev;
-}
-
-var Request = function(ip, date) {
-  this.ip   = ip;
-  this.date = date;
 }
 
 function expire(model, date) {
@@ -76,16 +62,15 @@ function expire(model, date) {
   }
 }
 
-function append(model, item) {
-  model._requests.push(item);
+function append(model, ip) {
   var org = 0;
-  if (item.ip in model._clients) {
+  if (ip in model._clients) {
     // existing client
-    org = model._clients[item.ip];
-    model._clients[item.ip] += 1;
+    org = model._clients[ip];
+    model._clients[ip] += 1;
   } else {
     // new client
-    model._clients[item.ip] = 1;
+    model._clients[ip] = 1;
     model._count += 1;
   }
   model._total  += 1;
