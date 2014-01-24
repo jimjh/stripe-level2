@@ -7,6 +7,7 @@ var httpProxy = require('./network_simulation/lib/proxy');
 var checkServer = require('./network_simulation/lib/check_server');
 var nopt = require('nopt');
 var url = require('url');
+var ClientModel = require('./client_model');
 
 var RequestData = function (request, response, buffer) {
   this.request = request;
@@ -24,17 +25,18 @@ function rejectRequest(reqData) {
 }
 
 var Queue = function (proxies, parameters) {
-  this.proxies = proxies;
+  this.proxies    = proxies;
   this.parameters = parameters;
+  this.model      = new ClientModel(60, 20);
 };
 Queue.prototype.takeRequest = function (reqData) {
-  // Reject traffic as necessary:
-  // if (currently_blacklisted(ipFromRequest(reqData))) {
-  //   rejectRequest(reqData);
-  //   return;
-  // }
-  // Otherwise proxy it through:
-  // TODO step 1 - identify mailicious requests
+  var ip = ipFromRequest(reqData),
+   score = this.model.score(ip);
+  if (!isNaN(score) && score > 1.5) {
+    rejectRequest(reqData);
+    return;
+  }
+  this.model.push(ip, new Date());
   this.proxyRequest(reqData);
 };
 Queue.prototype.requestFinished = function () {

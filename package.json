@@ -15,6 +15,6 @@
     "nopt": "*",
     "underscore": "*",
     "seed-random": "*",
-    "heap": "0.2.3"
+    "linkedlist": "1.0.1"
   }
 }
