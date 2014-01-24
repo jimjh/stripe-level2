@@ -27,7 +27,7 @@ function rejectRequest(reqData) {
 var Queue = function (proxies, parameters) {
   this.proxies    = proxies;
   this.parameters = parameters;
-  this.model      = new ClientModel(60, 20);
+  this.model      = new ClientModel(60, 10);
 };
 Queue.prototype.takeRequest = function (reqData) {
   var ip = ipFromRequest(reqData),
