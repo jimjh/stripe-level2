@@ -34,11 +34,19 @@ Queue.prototype.takeRequest = function (reqData) {
   //   return;
   // }
   // Otherwise proxy it through:
-  this.proxies[0].proxyRequest(reqData.request, reqData.response, reqData.buffer);
+  // TODO step 0 - load balancing
+  // TODO step 1 - identify mailicious requests
+  // TODO step 2 - gauge how much load backends can take
+  this.proxyRequest(reqData);
 };
 Queue.prototype.requestFinished = function () {
   return;
 };
+Queue.prototype.proxyRequest = function(reqData) {
+  var i = 0;
+  if (Math.random() > 0.5) i++;
+  this.proxies[i].proxyRequest(reqData.request, reqData.response, reqData.buffer);
+}
 
 function checkBackends(targets, path, response) {
   var toCheck = targets.map(function (target) {
