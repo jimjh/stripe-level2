@@ -34,11 +34,15 @@ Queue.prototype.takeRequest = function (reqData) {
   //   return;
   // }
   // Otherwise proxy it through:
-  this.proxies[0].proxyRequest(reqData.request, reqData.response, reqData.buffer);
+  this.proxyRequest(reqData);
 };
 Queue.prototype.requestFinished = function () {
   return;
 };
+Queue.prototype.proxyRequest = function(reqData) {
+  var i = Math.floor(Math.random() * this.proxies.length);
+  this.proxies[i].proxyRequest(reqData.request, reqData.response, reqData.buffer);
+}
 
 function checkBackends(targets, path, response) {
   var toCheck = targets.map(function (target) {
