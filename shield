@@ -1,3 +1,5 @@
 #!/bin/sh
 BASE=$(readlink -f $(dirname $0))
+
+${BASE}/config.js $@
 exec nginx/sbin/nginx -c ${BASE}/conf/nginx.conf -g "daemon off;"

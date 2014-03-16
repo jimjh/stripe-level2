@@ -16,12 +16,13 @@ http {
     limit_req_zone $proxy_add_x_forwarded_for zone=one:10m rate=5r/s;
 
     upstream backends {
-      server 127.0.0.1:3001;
-      server 127.0.0.1:3002;
+      {{#outPorts}}
+      server 127.0.0.1:{{.}};
+      {{/outPorts}}
     }
 
     server {
-        listen       3000;
+        listen       {{inPort}};
         server_name  localhost;
         limit_req zone=one burst=10 nodelay;
         location / {
