@@ -1,0 +1,4 @@
+1. figure out how to replace shield with nginx
+  - create a configuration template with placeholders for ports
+2. figure out how to use nginx for load-balancing
+3. figure out how to use nginx for DDoS defence
