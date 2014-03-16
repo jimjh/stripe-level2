@@ -2,7 +2,7 @@
 
 npm install
 
-BASE=$(dirname $0)
+BASE=$(readlink -f $(dirname $0))
 
 # download and build nginx
 if [ ! -d ${BASE}/nginx ]; then
